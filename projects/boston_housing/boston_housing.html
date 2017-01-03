@@ -1683,7 +1683,7 @@ sJES/hf5xgAAAABJRU5ErkJggg==
 Among the choices plotted above, maximum depths of 3 and 6 look like the best choices. While you could make a case for either, since the testing curves are similar, I would select the max depth = 3 model as it is simpler and has fewer parameters to fit for the fixed amount of data.</p>
 <p>As expected, the training score improves as the max depth is increased from 1 to 10.</p>
 <p>However, while the test curve improves as max depth is increased from 1 to 3, there appears to be no statistical difference between max depth = 3 and max depth = 6 test curves, and the max depth = 10 test curve is noticeably worse than either.</p>
-<p>It looks like all training curves have converged, so I would not expect more data to significantly help improve the model. It does look like the max depth = 10 training curve may not have converged yet, but the test curve has converged, so I would expect more data to contribute to overfitting in that case.</p>
+<p>It looks like all testing curves have converged, so I would not expect more data to significantly help improve the model. It does look like the max depth = 10 training curve may not have converged yet, but the test curve has converged, so I would not expect more data improve the model. I would expect it to contribute only to overfitting in that case.</p>
 
 </div>
 </div>
@@ -2169,7 +2169,7 @@ SUVORK5CYII=
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong></p>
-<p>When the model is trained with maximum depth of 1, it suffers from high bias.  When the model is trained with maximum depth of 10, it suffers from high variance. In general, we know that low order or low depth models will not have enough parameters to fit the data. OTOH, high order or high depth models will tend to overfit the data. The visual cue is the separation of the training score and the validation score. As the model maximum depth increases, the validation score should improve as well if there is systematic behavior that can be modeled and that is described by the data set. When the validation score flattens out or starts to decline, then it suggests that the additional training score reduction is from modeling some correlation in the training set that does not reliably appear in the validation set. The additional improvement in the training score is thus a result of overfitting model parameters to the training data.</p>
+<p>When the model is trained with maximum depth of 1, it suffers from high bias.  When the model is trained with maximum depth of 10, it suffers from high variance. In general, we know that low order or low depth models will not have enough parameters to fit the data. OTOH, high order or high depth models will tend to overfit the data. The visual cue for high bias is the low training score for the maximum depth = 1 model. It is only explaining about 45-50% of the variance in the data. The visual cue for high variance in the maximum depth = 10 model is the separation of the training score and the validation score. As the model maximum depth increases, the validation score should improve as well if there is systematic behavior that can be modeled and that is described by the data set. When the validation score flattens out or starts to decline, then it suggests that the additional training score reduction is from modeling some correlation in the training set that does not reliably appear in the validation set. The additional improvement in the training score is thus a result of overfitting model parameters to the training data.</p>
 
 </div>
 </div>
@@ -2222,7 +2222,7 @@ I think a maximum depth of 5 will generalize best because the validation score l
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong>
-The grid search technique is a systematic way to vary parameter tuning for a set of possible values for each parameter. For each combination of parameters, one can look at the training score and validation score. This enables the creation of a multidimensional surfaces to determine which is the optimal combination of parameter choices.</p>
+The grid search technique is a systematic way to vary parameter tuning for a set of possible values for each parameter. For each combination of parameters, one can look at the training score and validation score. One can visualize this as creating multidimensional surfaces for the training score and validation score as we did above by varying maximum depth in the complexity curve, though in practice - for example using Python sklearn toolkit - a function call can return the optimal parameter set, and examining graphs is not required.</p>
 
 </div>
 </div>
@@ -2244,7 +2244,8 @@ The grid search technique is a systematic way to vary parameter tuning for a set
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong>
-k-fold cross validation is a method in which the data set is split into k subsets of size N/k (where N is the total number of observations). Then k experiments are performed, with each experiment corresponding to a different choice of the k subsets as the validation data set. The k experiments generate k training scores and k validation scores. Statistics on these scores (averages and standard deviations for both training scores and validation scores) can then be constructed for each combination of parameter choices in the grid search. This enables the construction of the surfaces mentioned above for use in analyzing the bias/variance tradeoff. The advantage is that using the average of all the k choices of validation data should reduce the chances of getting a spurious result for a poor choice of validation data subset. In essence, all of the data is used for training, and all of it is used for validation. Because of this, the percentage of data used for the validation subset may be reduced (say 10% instead of 20%) so that a higher percentage of the data can be used for fitting the model.</p>
+k-fold cross validation is a method in which the data set is split into k subsets of size N/k (where N is the total number of observations). Then k experiments are performed, with each experiment corresponding to a different choice of the k subsets as the validation data set. In other words, for each experiment, one of the k subsets will be chosen as the validation data set, and the other k-1 subsets will combine to form the training data set.</p>
+<p>The k experiments generate k training scores and k validation scores. Statistics on these scores (averages and standard deviations for both training scores and validation scores) can then be constructed for each combination of parameter choices in the grid search. The advantage is that using the average of all the k choices of validation data should reduce the chances of getting a spurious result for a poor choice of validation data subset. In essence, all of the data is used for training, and all of it is used for validation. Because of this, the percentage of data used for the validation subset may be reduced (say 10% instead of 20%) so that a higher percentage of the data can be used for fitting the model.</p>
 
 </div>
 </div>
