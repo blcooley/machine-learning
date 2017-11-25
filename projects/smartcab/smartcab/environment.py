@@ -356,8 +356,10 @@ class Environment(object):
             elif violation == 2: # Major violation
                 reward += -10
             elif violation == 3: # Minor accident
+                print("Accident: action was {}, waypoint was {}, light was {}, oncoming was {}, left was {}".format(action, agent.get_next_waypoint(), light, inputs['oncoming'], inputs['left']))
                 reward += -20
             elif violation == 4: # Major accident
+                print("Accident: action was {}, waypoint was {}, light was {}, oncoming was {}, left was {}".format(action, agent.get_next_waypoint(), light, inputs['oncoming'], inputs['left']))
                 reward += -40
 
         # Did agent reach the goal after a valid move?

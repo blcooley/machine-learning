@@ -41,6 +41,7 @@ class LearningAgent(Agent):
         # If 'testing' is True, set epsilon and alpha to 0
         if testing:
             self.epsilon = 0
+            print(self.epsilon)
             self.alpha = 0
         else:
             self.epsilon = self.epsilon * self.decay_rate
@@ -63,7 +64,7 @@ class LearningAgent(Agent):
         # With the hand-engineered features, this learning process gets entirely negated.
         
         # Set 'state' as a tuple of relevant data for the agent        
-        state = (waypoint, inputs['light'], inputs['oncoming'])
+        state = (waypoint, inputs['light'], inputs['oncoming'], inputs['left'] == 'forward')
 
         return state
 
@@ -107,11 +108,19 @@ class LearningAgent(Agent):
         # When learning, choose a random action with 'epsilon' probability
         # Otherwise, choose an action with the highest Q-value for the current state
         # Be sure that when choosing an action with highest Q-value that you randomly select between actions that "tie".
-        if not self.learning or self.epsilon > random.random():
+        choose_random = random.random()
+        if self.epsilon > choose_random and choose_random < 0.05:
+            print("Choosing randomly in test!")
+            
+        if not self.learning or self.epsilon > choose_random:
             action = random.choice(self.available_actions)
         else:
             maxQ = self.get_maxQ(state)
-            action = random.choice([key for key in self.Q[state] if self.Q[state][key] == maxQ])
+            possible_actions = [key for key in self.Q[state] if self.Q[state][key] == maxQ]
+            if self.epsilon < 0.05 and len(possible_actions) > 1:
+                print("Choosing randomly from possible actions {}".format(possible_actions))
+                print("Q values: {}".format(self.Q[state]))
+            action = random.choice(possible_actions)
             
         print(action)
         return action
@@ -163,7 +172,7 @@ def run():
     #    * epsilon - continuous value for the exploration factor, default is 1
     #    * alpha   - continuous value for the learning rate, default is 0.5
     #    * decay_rate - multiplicative decay rate for epsilon
-    agent = env.create_agent(LearningAgent, learning = True, decay_rate = 0.7, alpha = 0.8)
+    agent = env.create_agent(LearningAgent, learning = True, decay_rate = 0.99, alpha = 0.75)
     
     ##############
     # Follow the driving agent
@@ -185,7 +194,7 @@ def run():
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(n_test = 10)
+    sim.run(n_test = 50, tolerance = 0.20)
 
 
 if __name__ == '__main__':
