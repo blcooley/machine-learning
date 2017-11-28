@@ -9,7 +9,7 @@ class LearningAgent(Agent):
         This is the object you will be modifying. """ 
 
 
-    def __init__(self, env, learning=False, epsilon=1.0, alpha=0.5, decay_rate = 0.5):
+    def __init__(self, env, learning=False, epsilon=1.0, alpha=0.5, linear=True, decay_rate=0.5):
         super(LearningAgent, self).__init__(env)     # Set the agent in the evironment 
         self.planner = RoutePlanner(self.env, self)  # Create a route planner
         self.valid_actions = self.env.valid_actions  # The set of valid actions
@@ -25,6 +25,7 @@ class LearningAgent(Agent):
         ###########
         # Set any additional class parameters as needed
         self.available_actions =  [None, 'left', 'right', 'forward']
+        self.linear = linear
         self.decay_rate = decay_rate
 
 
@@ -43,6 +44,8 @@ class LearningAgent(Agent):
             self.epsilon = 0
             print(self.epsilon)
             self.alpha = 0
+        elif self.linear:
+            self.epsilon = self.epsilon - self.decay_rate
         else:
             self.epsilon = self.epsilon * self.decay_rate
             print self.epsilon
@@ -64,7 +67,7 @@ class LearningAgent(Agent):
         # With the hand-engineered features, this learning process gets entirely negated.
         
         # Set 'state' as a tuple of relevant data for the agent        
-        state = (waypoint, inputs['light'], inputs['oncoming'], inputs['left'] == 'forward')
+        state = (waypoint, inputs['light'], inputs['oncoming'], inputs['left'])
 
         return state
 
@@ -172,7 +175,7 @@ def run():
     #    * epsilon - continuous value for the exploration factor, default is 1
     #    * alpha   - continuous value for the learning rate, default is 0.5
     #    * decay_rate - multiplicative decay rate for epsilon
-    agent = env.create_agent(LearningAgent, learning = True, decay_rate = 0.99, alpha = 0.75)
+    agent = env.create_agent(LearningAgent, learning = True, linear = False, decay_rate = 0.99, alpha = 0.8)
     
     ##############
     # Follow the driving agent
@@ -194,7 +197,7 @@ def run():
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(n_test = 50, tolerance = 0.20)
+    sim.run(n_test = 50, tolerance = 0.10)
 
 
 if __name__ == '__main__':
